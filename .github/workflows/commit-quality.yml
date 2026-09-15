@@ -28,6 +28,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Validate pull request branch name
+        if: github.event_name == 'pull_request'
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: scripts/check-branch-name.sh "${BRANCH_NAME}"
+
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
