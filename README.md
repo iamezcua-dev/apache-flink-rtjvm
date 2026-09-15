@@ -60,6 +60,32 @@ Git hooks can technically be bypassed with `--no-verify`; GitHub Actions remains
 the authoritative check for pull request titles, every commit in a pull request,
 and pushes to `main`.
 
+## Branch conventions
+
+Branch names use the following format:
+
+```text
+<type>/<lowercase-kebab-description>
+```
+
+Allowed branch types are `feat`, `fix`, `docs`, `style`, `refactor`, `perf`,
+`test`, `build`, `ci`, `revert`, and `section`. The `section` type groups work
+for a course section while following the same naming structure as other
+branches.
+
+Examples:
+
+```text
+build/initial-repository-setup
+section/event-time-and-watermarks
+feat/kafka-event-source
+fix/late-event-handling
+```
+
+The `pre-push` hook rejects invalid branch names and direct pushes to `main`.
+GitHub Actions applies the same branch-name validation to pull requests. Create
+commits on a review branch and open a pull request to merge them into `main`.
+
 ### Recommended GitHub settings
 
 Protect `main` with these repository settings:
