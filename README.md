@@ -11,8 +11,8 @@ application. Java is the runtime for the Flink course code.
 The repository requires:
 
 - Python 3.13
-- Any JDK 17 distribution, such as Amazon Corretto, Eclipse Temurin, BellSoft
-  Liberica, or OpenJDK
+- Any JDK 17 distribution from a vendor of your choice, such as Amazon Corretto,
+  Eclipse Temurin, BellSoft Liberica, OpenJDK, etc.
 - [Homebrew](https://brew.sh/)
 - Git and the Xcode Command Line Tools
 
@@ -41,7 +41,7 @@ echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zsh
 echo 'eval "$(pyenv init - zsh)"' >> ~/.zshrc
 echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
 echo 'eval "$(jenv init -)"' >> ~/.zshrc
-exec "$SHELL" -l
+source ~/.zshrc
 ```
 
 Install Python 3.13. Pyenv resolves `3.13` to the latest available Python 3.13
@@ -59,7 +59,7 @@ Homebrew. Register the installed JDK with jenv, then enable automatic
 /usr/libexec/java_home -V
 jenv add "$(/usr/libexec/java_home -v 17)"
 jenv enable-plugin export
-exec "$SHELL" -l
+source ~/.zshrc
 ```
 
 If more than one JDK 17 is installed, pass the desired JDK home directory to
@@ -69,7 +69,9 @@ require a particular vendor or patch release.
 ### Configure a fresh clone
 
 From the cloned repository directory, install the pinned development tools and
-Git hooks:
+Git hooks. Pinning keeps local validation consistent with GitHub Actions and
+prevents tool upgrades from changing repository checks unexpectedly. Update the
+versions here and in the workflow together when upgrading:
 
 ```bash
 pipx install --python "$(pyenv which python)" "commitizen==4.18.0"
