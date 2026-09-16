@@ -31,6 +31,16 @@ These instructions apply to every task in this repository.
 
 - Push the completed branch and open a draft pull request against `main` using
   `.github/pull_request_template.md`.
+- When review feedback arrives, read every review summary, inline comment, and
+  question. Address each item in the branch or explain why no change is needed.
+- Reply directly to every review thread with the answer, rationale, and relevant
+  commit. Updating the code without replying does not answer the reviewer.
+- Rerun the relevant checks after review changes and wait for required CI checks
+  to pass. Leave review threads unresolved so the reviewer can confirm the
+  response unless the user asks you to resolve them.
+- Before reporting that review work is complete, confirm that every substantive
+  question and comment has a direct response and that all requested changes are
+  ready for approval.
 - Keep the pull request in draft state so the user can review it and decide when
   it is ready. Do not mark it ready or merge it.
 - Report the branch, commit, checks run, draft pull request link, and any
