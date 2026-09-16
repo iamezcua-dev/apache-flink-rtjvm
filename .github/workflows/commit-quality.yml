@@ -63,4 +63,12 @@ jobs:
         env:
           BEFORE_SHA: ${{ github.event.before }}
           HEAD_SHA: ${{ github.sha }}
-        run: cz check --rev-range "${BEFORE_SHA}..${HEAD_SHA}"
+        run: |
+          # GitHub creates a merge commit with a non-Conventional Commit message.
+          # Validate every non-merge commit introduced by the push instead.
+          set -o pipefail
+          git rev-list --no-merges --reverse "${BEFORE_SHA}..${HEAD_SHA}" |
+          while IFS= read -r commit_sha; do
+            echo "Validating ${commit_sha}"
+            cz check --message "$(git show -s --format=%B "${commit_sha}")"
+          done
