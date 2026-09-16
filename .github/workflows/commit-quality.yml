@@ -1,0 +1,66 @@
+name: Commit quality
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate commits and repository files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out pull request head
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Check out pushed revision
+        if: github.event_name == 'push'
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Validate pull request branch name
+        if: github.event_name == 'pull_request'
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: scripts/check-branch-name.sh "${BRANCH_NAME}"
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Install developer tools
+        run: python -m pip install "commitizen==4.18.0" "pre-commit==4.6.1"
+
+      - name: Run generic repository checks
+        run: pre-commit run --all-files --show-diff-on-failure
+
+      - name: Validate pull request commits
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: cz check --rev-range "${BASE_SHA}..${HEAD_SHA}"
+
+      - name: Validate pull request title
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: cz check --message "${PR_TITLE}"
+
+      - name: Validate pushed commits
+        if: github.event_name == 'push'
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: cz check --rev-range "${BEFORE_SHA}..${HEAD_SHA}"
